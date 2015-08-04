@@ -13,6 +13,11 @@ import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.PlaceLikelihood;
+import com.google.android.gms.location.places.PlaceLikelihoodBuffer;
 import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -35,6 +40,7 @@ import java.net.URL;
 public class MapsActivity extends FragmentActivity implements LocationListener, GoogleMap.OnMyLocationChangeListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
     public static final LatLng SCE = new LatLng(25.025797, 121.537819);
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
+    private GoogleApiClient api;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +51,7 @@ public class MapsActivity extends FragmentActivity implements LocationListener, 
             mMap.setMyLocationEnabled(true);
             mMap.setOnMyLocationChangeListener(this);
         }
-        GoogleApiClient api = new GoogleApiClient.Builder(this)
+        api = new GoogleApiClient.Builder(this)
                 .addApi(Places.PLACE_DETECTION_API)
                 .addApi(Places.GEO_DATA_API)
                 .addConnectionCallbacks(this)
@@ -143,6 +149,7 @@ public class MapsActivity extends FragmentActivity implements LocationListener, 
     @Override
     public void onConnected(Bundle bundle) {
         Log.d("PLACES", "onConnected");
+        testPlaces();
     }
 
     @Override
@@ -202,5 +209,20 @@ public class MapsActivity extends FragmentActivity implements LocationListener, 
                 e.printStackTrace();
             }
         }
+    }
+
+    private void testPlaces(){
+        PendingResult<PlaceLikelihoodBuffer> result =
+                Places.PlaceDetectionApi.getCurrentPlace(api, null);
+        result.setResultCallback(new ResultCallback<PlaceLikelihoodBuffer>() {
+            @Override
+            public void onResult(PlaceLikelihoodBuffer placeLikelihoods) {
+                Log.d("PLACES", "onResult:"+placeLikelihoods.getCount());
+                for (PlaceLikelihood placeLikelihood: placeLikelihoods){
+                    Place place = placeLikelihood.getPlace();
+                    Log.d("PLACES", place.getName().toString());
+                }
+            }
+        });
     }
 }
