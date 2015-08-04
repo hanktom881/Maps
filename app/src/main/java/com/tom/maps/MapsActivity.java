@@ -2,6 +2,8 @@ package com.tom.maps;
 
 import android.app.Notification;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -22,6 +24,7 @@ import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -62,16 +65,22 @@ public class MapsActivity extends FragmentActivity implements LocationListener, 
         manager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
                 0, 10, this);*/
 
-        /*NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        /*
         Notification noti = new NotificationCompat.Builder(this)
                 .setContentTitle("Testing")
+                .setSmallIcon(R.drawable.face_sunglasses)
                 .build();
-        manager.notify(1, noti);*/
-        /*Notification.Builder builder = new Notification.Builder(this);
+        manager.notify(1, noti);
+*/
+        Notification.Builder builder = new Notification.Builder(this);
         builder.setContentTitle("hahahah");
         builder.setContentText("Testing");
+        builder.setSmallIcon(R.drawable.face_sunglasses);
+        Intent intent = new Intent(this, TestActivity.class);
+        builder.setContentIntent(PendingIntent.getActivity(this, 99, intent, PendingIntent.FLAG_UPDATE_CURRENT));
         Notification noti = builder.build();
-        manager.notify(1, noti);*/
+        manager.notify(1, noti);
     }
 
     @Override
